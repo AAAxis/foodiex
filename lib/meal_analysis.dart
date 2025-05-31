@@ -508,7 +508,7 @@ class MealAnalysisResult {
 class ImageService {
   static final _storage = FirebaseStorage.instance;
   static const _functionUrl =
-      'https://analyze-meal-image-7jk47pqmda-uc.a.run.app';
+      'https://us-central1-bankapp-9798a.cloudfunctions.net/analyze_meal_image';
   
   // Note: This service supports both authenticated and non-authenticated users
   // - Authenticated users: Images are uploaded to Firebase Storage and URL is sent to cloud function

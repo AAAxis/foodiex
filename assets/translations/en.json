@@ -275,6 +275,7 @@
     "goals_updated": "Goals updated successfully",
     "goals_error": "Error updating goals",
     "nav_home": "Home",
+    "analyzing": "Analyzing...",
     "nav_add": "Scan",
     "nav_roadmap": "Roadmap",
     "nav_settings": "Settings",

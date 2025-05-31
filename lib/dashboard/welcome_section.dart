@@ -65,6 +65,11 @@ class _WelcomeSectionState extends State<WelcomeSection>
     'sleep_hours': 7.5,
   };
 
+  // Animation flags
+  bool _hasAnimatedCalories = false;
+  bool _hasAnimatedSteps = false;
+  bool _hasAnimatedSleep = false;
+
   @override
   void initState() {
     super.initState();
@@ -289,6 +294,16 @@ class _WelcomeSectionState extends State<WelcomeSection>
                                           subTextColor,
                                           isDark,
                                         ),
+                                        _buildMacrosCard(
+                                          widget.macros,
+                                          widget.proteinGoal,
+                                          widget.carbsGoal,
+                                          widget.fatsGoal,
+                                          cardColor,
+                                          textColor,
+                                          subTextColor,
+                                          isDark,
+                                        ),
                                         _buildStepsCard(
                                           stats['steps'] as int,
                                           cardColor,
@@ -304,16 +319,6 @@ class _WelcomeSectionState extends State<WelcomeSection>
                                               (isDark
                                                   ? Colors.grey[400]
                                                   : Colors.grey[600]),
-                                          isDark,
-                                        ),
-                                        _buildMacrosCard(
-                                          widget.macros,
-                                          widget.proteinGoal,
-                                          widget.carbsGoal,
-                                          widget.fatsGoal,
-                                          cardColor,
-                                          textColor,
-                                          subTextColor,
                                           isDark,
                                         ),
                                       ],
@@ -410,22 +415,37 @@ class _WelcomeSectionState extends State<WelcomeSection>
                     ),
                   ),
                   const SizedBox(height: 8),
-                  TweenAnimationBuilder<double>(
-                    duration: const Duration(milliseconds: 1000),
-                    tween: Tween(begin: 0, end: caloriesRemaining.abs()),
-                    curve: Curves.easeOutCubic,
-                    builder: (context, value, child) {
-                      return Text(
-                        value.toStringAsFixed(0),
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                          height: 1.1,
+                  !_hasAnimatedCalories
+                      ? TweenAnimationBuilder<double>(
+                          duration: const Duration(milliseconds: 1000),
+                          tween: Tween(begin: 0, end: caloriesRemaining.abs()),
+                          curve: Curves.easeOutCubic,
+                          onEnd: () {
+                            setState(() {
+                              _hasAnimatedCalories = true;
+                            });
+                          },
+                          builder: (context, value, child) {
+                            return Text(
+                              value.toStringAsFixed(0),
+                              style: TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                                height: 1.1,
+                              ),
+                            );
+                          },
+                        )
+                      : Text(
+                          caloriesRemaining.abs().toStringAsFixed(0),
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                            height: 1.1,
+                          ),
                         ),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),
@@ -540,22 +560,37 @@ class _WelcomeSectionState extends State<WelcomeSection>
                     ),
                   ),
                   const SizedBox(height: 8),
-                  TweenAnimationBuilder<int>(
-                    duration: const Duration(milliseconds: 1200),
-                    tween: IntTween(begin: 0, end: steps),
-                    curve: Curves.easeOutCubic,
-                    builder: (context, value, child) {
-                      return Text(
-                        value.toString(),
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                          height: 1.1,
+                  !_hasAnimatedSteps
+                      ? TweenAnimationBuilder<int>(
+                          duration: const Duration(milliseconds: 1200),
+                          tween: IntTween(begin: 0, end: steps),
+                          curve: Curves.easeOutCubic,
+                          onEnd: () {
+                            setState(() {
+                              _hasAnimatedSteps = true;
+                            });
+                          },
+                          builder: (context, value, child) {
+                            return Text(
+                              value.toString(),
+                              style: TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                                height: 1.1,
+                              ),
+                            );
+                          },
+                        )
+                      : Text(
+                          steps.toString(),
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                            height: 1.1,
+                          ),
                         ),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),
@@ -664,22 +699,37 @@ class _WelcomeSectionState extends State<WelcomeSection>
                     ),
                   ),
                   const SizedBox(height: 8),
-                  TweenAnimationBuilder<double>(
-                    duration: const Duration(milliseconds: 1400),
-                    tween: Tween(begin: 0.0, end: sleepHours),
-                    curve: Curves.easeOutCubic,
-                    builder: (context, value, child) {
-                      return Text(
-                        '${value.toStringAsFixed(1)}h',
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                          height: 1.1,
+                  !_hasAnimatedSleep
+                      ? TweenAnimationBuilder<double>(
+                          duration: const Duration(milliseconds: 1400),
+                          tween: Tween(begin: 0.0, end: sleepHours),
+                          curve: Curves.easeOutCubic,
+                          onEnd: () {
+                            setState(() {
+                              _hasAnimatedSleep = true;
+                            });
+                          },
+                          builder: (context, value, child) {
+                            return Text(
+                              '${value.toStringAsFixed(1)}h',
+                              style: TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                                height: 1.1,
+                              ),
+                            );
+                          },
+                        )
+                      : Text(
+                          '${sleepHours.toStringAsFixed(1)}h',
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                            height: 1.1,
+                          ),
                         ),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),

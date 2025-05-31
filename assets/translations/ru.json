@@ -9,6 +9,7 @@
     "gender_female": "Женский",
     "gender_other": "Другой",
     "select_goal": "Какова ваша основная цель?",
+      "analyzing": "Анализ...",
     "select_goal_subtitle": "Выберите вашу основную цель фитнеса",
     "goal_lose_weight": "Сбросить вес",
     "goal_maintain_weight": "Поддерживать вес",

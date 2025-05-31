@@ -246,7 +246,7 @@ class _MealHistoryState extends State<MealHistory> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Analyzing...',
+                                            'dashboard.analyzing'.tr(),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .titleMedium

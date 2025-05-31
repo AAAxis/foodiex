@@ -6,7 +6,7 @@ import 'wizard_flow.dart';
 class CongratulationsScreen extends StatefulWidget {
   final VoidCallback onNext;
   final VoidCallback onBack;
-  
+
   const CongratulationsScreen({
     Key? key,
     required this.onNext,
@@ -34,7 +34,8 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
 
   double _calculateBMR(String gender, int age, double weight, double height) {
     // Mifflin-St Jeor Equation
-    if (gender.toLowerCase().contains('male') && !gender.toLowerCase().contains('female')) {
+    if (gender.toLowerCase().contains('male') &&
+        !gender.toLowerCase().contains('female')) {
       return (10 * weight) + (6.25 * height) - (5 * age) + 5;
     } else {
       return (10 * weight) + (6.25 * height) - (5 * age) - 161;
@@ -44,7 +45,7 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
   Future<void> _calculateInBackground() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Load all collected data
       _userData = {
         'gender': prefs.getString('gender') ?? 'wizard.gender_male',
@@ -69,21 +70,24 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
 
       // Calculate macros based on diet type
       double proteinRatio = 0.3; // 30% of calories from protein
-      double carbsRatio = 0.4;   // 40% of calories from carbs
-      double fatsRatio = 0.3;    // 30% of calories from fats
+      double carbsRatio = 0.4; // 40% of calories from carbs
+      double fatsRatio = 0.3; // 30% of calories from fats
 
       // Adjust ratios based on diet type
       if (_userData['dietType'] == 'wizard.diet_keto') {
-        carbsRatio = 0.05;    // 5% carbs
-        proteinRatio = 0.35;  // 35% protein
-        fatsRatio = 0.60;     // 60% fats
+        carbsRatio = 0.05; // 5% carbs
+        proteinRatio = 0.35; // 35% protein
+        fatsRatio = 0.60; // 60% fats
       }
 
       final newNutritionGoals = {
         'calories': dailyCalories,
-        'protein': (dailyCalories * proteinRatio) / 4, // 4 calories per gram of protein
-        'carbs': (dailyCalories * carbsRatio) / 4,     // 4 calories per gram of carbs
-        'fats': (dailyCalories * fatsRatio) / 9,       // 9 calories per gram of fat
+        'protein':
+            (dailyCalories * proteinRatio) /
+            4, // 4 calories per gram of protein
+        'carbs':
+            (dailyCalories * carbsRatio) / 4, // 4 calories per gram of carbs
+        'fats': (dailyCalories * fatsRatio) / 9, // 9 calories per gram of fat
       };
 
       // Save nutrition goals
@@ -106,7 +110,7 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
 
   Widget _buildNutritionCard(String label, String value, Widget icon) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       width: 200,
@@ -140,17 +144,21 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
           const SizedBox(height: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: value.split(' ').map((part) => 
-              Text(
-                part,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-            ).toList(),
+            children:
+                value
+                    .split(' ')
+                    .map(
+                      (part) => Text(
+                        part,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    )
+                    .toList(),
           ),
         ],
       ),
@@ -167,14 +175,8 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
         // Background image with dark overlay for dark mode
         Stack(
           children: [
-            Image.asset(
-              'images/main.jpg',
-              fit: BoxFit.cover,
-            ),
-            if (isDarkMode)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-              ),
+            Image.asset('images/main.jpg', fit: BoxFit.cover),
+            if (isDarkMode) Container(color: Colors.black.withOpacity(0.5)),
           ],
         ),
         // Back button and language selector
@@ -190,10 +192,7 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                    ),
+                    icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                     onPressed: widget.onBack,
                   ),
                   const LanguageSelector(),
@@ -211,7 +210,9 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
             ),
             child: Column(
               children: [
@@ -235,26 +236,31 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
                           Text(
                             'wizard.setup_complete'.tr(),
                             style: TextStyle(
-                              fontSize: 32,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.onSurface,
                               decoration: TextDecoration.none,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 24),
                           SizedBox(
                             height: 180,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               children: [
                                 _buildNutritionCard(
                                   'calories',
                                   '${_nutritionGoals['calories']?.round() ?? 0} kcal',
                                   Icon(
                                     Icons.local_fire_department,
-                                    color: isDarkMode ? Colors.white : Colors.black,
+                                    color:
+                                        isDarkMode
+                                            ? Colors.white
+                                            : Colors.black,
                                     size: 28,
                                   ),
                                 ),
@@ -323,4 +329,4 @@ class _CongratulationsScreenState extends State<CongratulationsScreen> {
       ],
     );
   }
-} 
+}

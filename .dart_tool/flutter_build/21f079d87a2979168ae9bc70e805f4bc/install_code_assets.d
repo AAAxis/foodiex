@@ -1,0 +1,1 @@
+ /Users/admin/Documents/GitHub/foodiex/.dart_tool/flutter_build/21f079d87a2979168ae9bc70e805f4bc/native_assets.json: 

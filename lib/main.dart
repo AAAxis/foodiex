@@ -35,38 +35,20 @@ Future<void> triggerCameraAccess(BuildContext context) async {
       final hasUsedFreeScan = await _checkIfUserHasUsedFreeScan();
       if (hasUsedFreeScan) {
         print('🔒 No active subscription and free scan already used, showing paywall...');
-        
         // Check if user has used a referral code for metadata tracking
         final prefs = await SharedPreferences.getInstance();
         final hasUsedReferralCode = prefs.getBool('has_used_referral_code') ?? false;
         final referralCode = prefs.getString('referral_code') ?? 'none';
-        
-        // Always show the same paywall flow regardless of referral code
-        // First try the default "Sale" offering
-        final purchased = await PaywallService.showPaywall(
-          context, 
+        // Show only the default paywall, no fallback
+        await PaywallService.showPaywall(
+          context,
           forceCloseOnRestore: true,
           metadata: {
             'referral_code_used': hasUsedReferralCode ? referralCode : 'none',
             'source': 'camera_access_paywall',
           },
         );
-        if (!purchased) {
-          // User cancelled the Sale paywall, show Offer paywall as fallback
-          print('💡 User closed Sale paywall, showing Offer paywall as fallback...');
-          await PaywallService.showPaywall(
-            context, 
-            offeringId: 'Offer',
-            forceCloseOnRestore: true,
-            metadata: {
-              'referral_code_used': hasUsedReferralCode ? referralCode : 'none',
-              'source': 'fallback_after_sale_paywall',
-            },
-          );
-        }
-        
         // Always navigate to dashboard regardless of purchase result
-        // Add a small delay to ensure paywall is fully dismissed
         await Future.delayed(const Duration(milliseconds: 100));
         if (context.mounted) {
           Navigator.of(context).pushAndRemoveUntil(
@@ -233,7 +215,7 @@ Future<bool> _checkIfUserHasUsedFreeScan() async {
     if (user == null) {
       // If user is not logged in, check local storage for any meals
       final localMeals = await Meal.loadFromLocalStorage();
-      final hasUsedFreeScan = localMeals.isNotEmpty;
+      final hasUsedFreeScan = localMeals.length >= 2; // Allow 2 free scans by default
       print('🔍 Free scan check for non-authenticated user: hasUsed=$hasUsedFreeScan (${localMeals.length} local meals)');
       return hasUsedFreeScan;
     }
@@ -242,11 +224,11 @@ Future<bool> _checkIfUserHasUsedFreeScan() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('analyzed_meals')
         .where('userId', isEqualTo: user.uid)
-        .limit(1)
+        .limit(2)
         .get();
 
-    final hasUsedFreeScan = snapshot.docs.isNotEmpty;
-    print('🔍 Free scan check for user ${user.uid}: hasUsed=$hasUsedFreeScan');
+    final hasUsedFreeScan = snapshot.docs.length >= 2; // Allow 2 free scans by default
+    print('🔍 Free scan check for user ${user.uid}: hasUsed=$hasUsedFreeScan (${snapshot.docs.length} meals)');
     return hasUsedFreeScan;
   } catch (e) {
     print('❌ Error checking free scan usage: $e');
@@ -383,8 +365,13 @@ class _MainTabScreenState extends State<MainTabScreen> {
   }
 
   void _onTabTapped(int index) async {
+    // If scan button (index 1) is tapped, trigger scan and do not change tab
+    if (index == 1) {
+      await triggerCameraAccess(context);
+      return;
+    }
     // Special handling for settings tab when user is not authenticated
-    if (index == 2) {
+    if (index == 3) {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         // Navigate to login screen with replacement
@@ -394,7 +381,6 @@ class _MainTabScreenState extends State<MainTabScreen> {
         return; // Don't update the current index
       }
     }
-    
     setState(() {
       _currentIndex = index;
     });
@@ -405,9 +391,9 @@ class _MainTabScreenState extends State<MainTabScreen> {
     Widget body;
     if (_currentIndex == 0) {
       body = DashboardScreen(key: dashboardKey, isAnalyzing: _isAnalyzing);
-    } else if (_currentIndex == 1) {
-      body = ShopScreen();
     } else if (_currentIndex == 2) {
+      body = ShopScreen();
+    } else if (_currentIndex == 3) {
       body = SettingsScreen();
     } else {
       body = Container(); // Placeholder for other tabs
@@ -429,7 +415,8 @@ class _MainTabScreenState extends State<MainTabScreen> {
           ],
         ),
         child: BottomNavigationBar(
-          currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _currentIndex > 1 ? _currentIndex : _currentIndex, // keep index logic
           onTap: _onTabTapped,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -439,6 +426,10 @@ class _MainTabScreenState extends State<MainTabScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.dashboard),
               label: 'navbar.dashboard'.tr(),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.qr_code_scanner),
+              label: 'navbar.scan'.tr(),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.shop),

@@ -9,7 +9,8 @@ import 'wizard_flow.dart';
 class HealthScreen extends StatefulWidget {
   final VoidCallback onNext;
   final VoidCallback onBack;
-  const HealthScreen({Key? key, required this.onNext, required this.onBack}) : super(key: key);
+  const HealthScreen({Key? key, required this.onNext, required this.onBack})
+    : super(key: key);
 
   @override
   State<HealthScreen> createState() => _HealthScreenState();
@@ -83,17 +84,22 @@ class _HealthScreenState extends State<HealthScreen> {
   void showError(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
       );
     }
   }
 
-  Widget _buildHealthRow(String label, String value, IconData icon, Color color) {
+  Widget _buildHealthRow(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return InkWell(
-      onTap: () => _showEditDialog(label.startsWith('wizard.') ? label : 'wizard.$label'),
+      onTap:
+          () => _showEditDialog(
+            label.startsWith('wizard.') ? label : 'wizard.$label',
+          ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
@@ -162,7 +168,8 @@ class _HealthScreenState extends State<HealthScreen> {
                           trackHeight: 4.0,
                         ),
                         child: Slider(
-                          value: double.tryParse(tempSteps)?.clamp(0, 30000) ?? 0,
+                          value:
+                              double.tryParse(tempSteps)?.clamp(0, 30000) ?? 0,
                           min: 0,
                           max: 30000,
                           divisions: 300,
@@ -300,7 +307,10 @@ class _HealthScreenState extends State<HealthScreen> {
               ),
               content: Container(
                 width: MediaQuery.of(context).size.width * 0.8,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: buildSlider(),
               ),
               actions: [
@@ -364,23 +374,28 @@ class _HealthScreenState extends State<HealthScreen> {
         children: [
           // Title row with icon
           Padding(
-            padding: const EdgeInsets.only(top: 40, left: 24, right: 24, bottom: 16),
+            padding: const EdgeInsets.only(
+              top: 40,
+              left: 24,
+              right: 24,
+              bottom: 16,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'wizard.connect_health'.tr(),
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 if (Platform.isIOS) ...[
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   InkWell(
-                    borderRadius: BorderRadius.circular(32),
+                    borderRadius: BorderRadius.circular(24),
                     onTap: () async {
                       try {
                         final health = Health();
@@ -396,10 +411,11 @@ class _HealthScreenState extends State<HealthScreen> {
                           HealthDataAccess.READ,
                           HealthDataAccess.READ,
                         ];
-                        final bool authorized = await health.requestAuthorization(
-                          types,
-                          permissions: permissions,
-                        );
+                        final bool authorized = await health
+                            .requestAuthorization(
+                              types,
+                              permissions: permissions,
+                            );
                         if (authorized) {
                           final now = DateTime.now();
                           // Get steps
@@ -410,9 +426,11 @@ class _HealthScreenState extends State<HealthScreen> {
                           );
                           double totalSteps = 0;
                           for (final entry in stepsData) {
-                            final value = entry.value is NumericHealthValue
-                                ? (entry.value as NumericHealthValue).numericValue
-                                : 0.0;
+                            final value =
+                                entry.value is NumericHealthValue
+                                    ? (entry.value as NumericHealthValue)
+                                        .numericValue
+                                    : 0.0;
                             totalSteps += value;
                           }
                           if (totalSteps > 0) {
@@ -429,56 +447,82 @@ class _HealthScreenState extends State<HealthScreen> {
                           );
                           double totalSleepSeconds = 0;
                           for (final entry in sleepData) {
-                            final value = entry.value is NumericHealthValue
-                                ? (entry.value as NumericHealthValue).numericValue
-                                : 0.0;
+                            final value =
+                                entry.value is NumericHealthValue
+                                    ? (entry.value as NumericHealthValue)
+                                        .numericValue
+                                    : 0.0;
                             totalSleepSeconds += value;
                           }
                           if (totalSleepSeconds > 0) {
                             setState(() {
-                              _sleepHours = (totalSleepSeconds / 3600).clamp(0, 16).toDouble();
+                              _sleepHours =
+                                  (totalSleepSeconds / 3600)
+                                      .clamp(0, 16)
+                                      .toDouble();
                             });
                           }
 
                           // Get height
-                          final heightData = await health.getHealthDataFromTypes(
-                            types: [HealthDataType.HEIGHT],
-                            startTime: now.subtract(const Duration(days: 365 * 10)),
-                            endTime: now,
-                          );
+                          final heightData = await health
+                              .getHealthDataFromTypes(
+                                types: [HealthDataType.HEIGHT],
+                                startTime: now.subtract(
+                                  const Duration(days: 365 * 10),
+                                ),
+                                endTime: now,
+                              );
                           if (heightData.isNotEmpty) {
-                            final latestHeight = heightData
-                                .where((d) => d.value is NumericHealthValue)
-                                .lastOrNull
-                                ?.value as NumericHealthValue?;
-                            if (latestHeight != null && latestHeight.numericValue > 0) {
+                            final latestHeight =
+                                heightData
+                                        .where(
+                                          (d) => d.value is NumericHealthValue,
+                                        )
+                                        .lastOrNull
+                                        ?.value
+                                    as NumericHealthValue?;
+                            if (latestHeight != null &&
+                                latestHeight.numericValue > 0) {
                               setState(() {
-                                _heightValue = (latestHeight.numericValue * 100).toDouble();
+                                _heightValue =
+                                    (latestHeight.numericValue * 100)
+                                        .toDouble();
                               });
                             }
                           }
 
                           // Get weight
-                          final weightData = await health.getHealthDataFromTypes(
-                            types: [HealthDataType.WEIGHT],
-                            startTime: now.subtract(const Duration(days: 90)),
-                            endTime: now,
-                          );
+                          final weightData = await health
+                              .getHealthDataFromTypes(
+                                types: [HealthDataType.WEIGHT],
+                                startTime: now.subtract(
+                                  const Duration(days: 90),
+                                ),
+                                endTime: now,
+                              );
                           if (weightData.isNotEmpty) {
-                            final latestWeight = weightData
-                                .where((d) => d.value is NumericHealthValue)
-                                .lastOrNull
-                                ?.value as NumericHealthValue?;
-                            if (latestWeight != null && latestWeight.numericValue > 0) {
+                            final latestWeight =
+                                weightData
+                                        .where(
+                                          (d) => d.value is NumericHealthValue,
+                                        )
+                                        .lastOrNull
+                                        ?.value
+                                    as NumericHealthValue?;
+                            if (latestWeight != null &&
+                                latestWeight.numericValue > 0) {
                               setState(() {
-                                _weightValue = latestWeight.numericValue.toDouble();
+                                _weightValue =
+                                    latestWeight.numericValue.toDouble();
                               });
                             }
                           }
 
                           await _saveHealthData();
                         } else {
-                          showError('wizard.health_permissions_not_granted'.tr());
+                          showError(
+                            'wizard.health_permissions_not_granted'.tr(),
+                          );
                         }
                       } catch (e) {
                         print('Error connecting to Apple Health: $e');
@@ -498,10 +542,19 @@ class _HealthScreenState extends State<HealthScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 0,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: isDarkMode ? Theme.of(context).cardColor : Colors.grey[100],
+                      color:
+                          isDarkMode
+                              ? Theme.of(context).cardColor
+                              : Colors.grey[100],
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
@@ -549,4 +602,4 @@ class _HealthScreenState extends State<HealthScreen> {
       ),
     );
   }
-} 
+}
