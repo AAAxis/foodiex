@@ -8,7 +8,6 @@
     "enter_birth_date": "הזן את תאריך הלידה שלך",
     "select_gender": "מה המגדר שלך?",
     "select_gender_subtitle": "בחר את המגדר שלך",
-      "analyzing": "מנתח...",
     "gender_male": "זכר",
     "gender_female": "נקבה",
     "gender_other": "אחר",
@@ -279,6 +278,7 @@
     "verification_error": "שגיאה בשליחת קוד אימות"
   },
   "dashboard": {
+    "analyzing": "מנתח...",
     "steps_today": "צעדים היום",
     "sleep_hours": "שעות שינה",
     "title": "לוח בקרה",

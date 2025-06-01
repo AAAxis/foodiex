@@ -838,10 +838,10 @@ class _AnalysisDetailsScreenState extends State<AnalysisDetailsScreen> {
                               children: [
                                 Row(
                                   children: [
-                                                                      Icon(
-                                    Icons.local_fire_department,
-                                    color: Colors.black,
-                                  ),
+                                    Icon(
+                                      Icons.local_fire_department,
+                                      color: isDark ? Colors.white : Colors.black,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
                                       '${(_analysisData?['calories'] ?? 0.0).toStringAsFixed(1)} kcal',
@@ -926,7 +926,7 @@ class _AnalysisDetailsScreenState extends State<AnalysisDetailsScreen> {
                                     children: [
                                       Icon(
                                         Icons.restaurant_menu,
-                                        color: Colors.black,
+                                        color: isDark ? Colors.white : Colors.black,
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
@@ -1021,11 +1021,6 @@ class _AnalysisDetailsScreenState extends State<AnalysisDetailsScreen> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(
-                                    Icons.link,
-                                    color: Colors.black,
-                                  ),
-                                  const SizedBox(width: 8),
                                   Text(
                                     'details.source'.tr(),
                                     style: TextStyle(
@@ -1058,9 +1053,11 @@ class _AnalysisDetailsScreenState extends State<AnalysisDetailsScreen> {
                                   _analysisData?['source']?.toString() ?? '',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: _analysisData?['source']?.toString()?.startsWith('http') ?? false
-                                        ? Theme.of(context).primaryColor
-                                        : textColor,
+                                    color: isDark
+                                        ? Colors.white
+                                        : (_analysisData?['source']?.toString()?.startsWith('http') ?? false
+                                            ? Theme.of(context).primaryColor
+                                            : textColor),
                                   ),
                                 ),
                               ),

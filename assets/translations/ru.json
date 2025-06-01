@@ -9,7 +9,7 @@
     "gender_female": "Женский",
     "gender_other": "Другой",
     "select_goal": "Какова ваша основная цель?",
-      "analyzing": "Анализ...",
+   
     "select_goal_subtitle": "Выберите вашу основную цель фитнеса",
     "goal_lose_weight": "Сбросить вес",
     "goal_maintain_weight": "Поддерживать вес",
@@ -217,6 +217,7 @@
     "signin_to_access_settings": "Пожалуйста, войдите, чтобы получить доступ к настройкам"
   },
   "dashboard": {
+    "analyzing": "Анализ...",
     "steps_today": "Шагов сегодня",
     "sleep_hours": "Сон (часов)",
     "title": "Панель управления",
